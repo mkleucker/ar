@@ -1,34 +1,16 @@
 package edu.dhbw.andobjviewer;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Date;
-
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Debug;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
-import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.Toast;
 import edu.dhbw.andar.ARToolkit;
 import edu.dhbw.andar.AndARActivity;
@@ -39,10 +21,12 @@ import edu.dhbw.andobjviewer.graphics.Model3D;
 import edu.dhbw.andobjviewer.models.Model;
 import edu.dhbw.andobjviewer.parser.ObjParser;
 import edu.dhbw.andobjviewer.parser.ParseException;
-import edu.dhbw.andobjviewer.parser.Util;
 import edu.dhbw.andobjviewer.util.AssetsFileUtil;
 import edu.dhbw.andobjviewer.util.BaseFileUtil;
-import edu.dhbw.andobjviewer.util.SDCardFileUtil;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Example of an application that makes use of the AndAR toolkit.
@@ -155,7 +139,7 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
     	//load the model
     	//this is done here, to assure the surface was already created, so that the preview can be started
     	//after loading the model
-    	if(models == null) {
+    	if(models.size() == 0) {
 			waitDialog = ProgressDialog.show(this, "", 
 	                getResources().getText(R.string.loading), true);
 			waitDialog.show();
@@ -167,66 +151,8 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 		}
     }
     
-	
-    /**
-     * Handles touch events.
-     * @author Tobias Domhan
-     *
-     */
-    class TouchEventHandler implements OnTouchListener {
-    	
-    	private float lastX=0;
-    	private float lastY=0;
 
-		/* handles the touch events.
-		 * the object will either be scaled, translated or rotated, dependen on the
-		 * current user selected mode.
-		 * @see android.view.View.OnTouchListener#onTouch(android.view.View, android.view.MotionEvent)
-		 */
-		@Override
-		public boolean onTouch(View v, MotionEvent event) {
-//			if(models!=null) {
-//				switch(event.getAction()) {
-//					//Action started
-//					default:
-//					case MotionEvent.ACTION_DOWN:
-//						lastX = event.getX();
-//						lastY = event.getY();
-//						break;
-//					//Action ongoing
-//					case MotionEvent.ACTION_MOVE:
-//						float dX = lastX - event.getX();
-//						float dY = lastY - event.getY();
-//						lastX = event.getX();
-//						lastY = event.getY();
-//						if(models != null) {
-//							switch(mode) {
-//								case MENU_SCALE:
-//									model.setScale(dY/100.0f);
-//						            break;
-//						        case MENU_ROTATE:
-//						        	model.setXrot(-1*dX);//dY-> Rotation um die X-Achse
-//									model.setYrot(-1*dY);//dX-> Rotation um die Y-Achse
-//						            break;
-//						        case MENU_TRANSLATE:
-//						        	model.setXpos(dY/10f);
-//									model.setYpos(dX/10f);
-//						        	break;
-//							}
-//						}
-//						break;
-//					//Action ended
-//					case MotionEvent.ACTION_CANCEL:
-//					case MotionEvent.ACTION_UP:
-//						lastX = event.getX();
-//						lastY = event.getY();
-//						break;
-//				}
-//			}
-			return true;
-		}
-    	
-    }
+
     
 	private class ModelLoader extends AsyncTask<Void, Void, Void> {
 
@@ -240,7 +166,10 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
     	protected Void doInBackground(Void... params) {
 
             for (String model : this.modelNames) {
+
+                Log.d("asdf", "addind model: " + model);
                 this.getModel(model);
+                Log.d("asdf", "added model: "+model );
             }
 
             return null;
@@ -253,6 +182,7 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 
             BaseFileUtil fileUtil = new AssetsFileUtil(getResources().getAssets());
             fileUtil.setBaseFolder("models/");
+
 
             //read the model file:
             if (modelFileName.endsWith(".obj")) {
@@ -277,9 +207,12 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
                     if (fileUtil != null) {
                         BufferedReader fileReader = fileUtil.getReaderFromName(modelFileName);
                         if (fileReader != null) {
+                            Log.d("asdf", "Create model...");
                             Model model = parser.parse("Model", fileReader);
                             models.add(model);
                             models3d.add(new Model3D(model, name+".patt"));
+                            Log.d("asdf", "Create & add model done...");
+
                         }
                     }
                     if (Config.DEBUG)
@@ -296,12 +229,21 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
     	protected void onPostExecute(Void result) {
     		super.onPostExecute(result);
     		waitDialog.dismiss();
-    		
+
+            Log.d("asdf", "Dismiss...");
     		//register model
     		try {
-    			if(models3d!=null)
-                    for (Model3D model3d : models3d)
-    				    artoolkit.registerARObject(model3d);
+                Log.d("asdf", "try...");
+                Log.d("asdf", "try for ..." + models3d.size() + models3d);
+
+                if(models3d.size() > 0){
+                    for (Model3D model3d : models3d){
+                        Log.d("asdf", "Start add...");
+                        artoolkit.registerARObject(model3d);
+                        Log.d("asdf", "Added two...");
+                    }
+
+                }
 			} catch (AndARException e) {
 				e.printStackTrace();
 			}
@@ -337,7 +279,7 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 				Toast.makeText(AugmentedModelViewerActivity.this, getResources().getText(R.string.screenshotsaved), Toast.LENGTH_SHORT ).show();
 			else
 				Toast.makeText(AugmentedModelViewerActivity.this, getResources().getText(R.string.screenshotfailed)+errorMsg, Toast.LENGTH_SHORT ).show();
-		}
+		};
 		
 	}
 	
