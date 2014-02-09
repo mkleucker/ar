@@ -49,16 +49,16 @@ public class Model3D extends ARObject implements Serializable{
 	private Group[] nonTexturedGroups;
 	private HashMap<Material, Integer> textureIDs = new HashMap<Material, Integer>();
 
-    public Model3D(Model model){
-        this(Model model, "barcode.patt");
+
+    public Model3D(Model model) {
+        this(model, "barcode.patt");
     }
 
 	public Model3D(Model model, String pattern) {
 		super("model", pattern, 80.0, new double[]{0,0});
 		this.model = model;
-		model.finalize();
 		//separate texture from non textured groups for performance reasons
-		Vector<Group> groups = model.getGroups();
+		Vector<Group> groups = this.model.getGroups();
 		Vector<Group> texturedGroups = new Vector<Group>();
 		Vector<Group> nonTexturedGroups = new Vector<Group>();
 		for (Iterator<Group> iterator = groups.iterator(); iterator.hasNext();) {

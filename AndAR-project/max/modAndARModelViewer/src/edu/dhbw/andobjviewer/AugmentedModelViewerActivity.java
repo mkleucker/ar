@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -70,8 +71,8 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 	private int mode = MENU_SCALE;
 	
 
-	private Model model;
-	private Model3D model3d;
+	private ArrayList<Model> models;
+	private ArrayList<Model3D> models3d;
 	private ProgressDialog waitDialog;
 	private Resources res;
 	
@@ -79,6 +80,9 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 	
 	public AugmentedModelViewerActivity() {
 		super(false);
+
+        models = new ArrayList<Model>();
+        models3d = new ArrayList<Model3D>();
 	}
 	
 	@Override
@@ -87,6 +91,8 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 		super.setNonARRenderer(new LightingRenderer());//or might be omited
 		res=getResources();
 		artoolkit = getArtoolkit();
+
+
 
         loadMarkersAndModels();
 		//getSurfaceView().setOnTouchListener(new TouchEventHandler());
@@ -149,12 +155,14 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
     	//load the model
     	//this is done here, to assure the surface was already created, so that the preview can be started
     	//after loading the model
-    	if(model == null) {
+    	if(models == null) {
 			waitDialog = ProgressDialog.show(this, "", 
 	                getResources().getText(R.string.loading), true);
 			waitDialog.show();
-
-            ModelLoader loader = new ModelLoader();
+            ArrayList<String> models = new ArrayList<String>();
+            models.add("android");
+            models.add("barcode");
+            ModelLoader loader = new ModelLoader(models);
 			loader.execute();
 		}
     }
@@ -177,44 +185,44 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 		 */
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			if(model!=null) {
-				switch(event.getAction()) {
-					//Action started
-					default:
-					case MotionEvent.ACTION_DOWN:
-						lastX = event.getX();
-						lastY = event.getY();
-						break;
-					//Action ongoing
-					case MotionEvent.ACTION_MOVE:
-						float dX = lastX - event.getX();
-						float dY = lastY - event.getY();
-						lastX = event.getX();
-						lastY = event.getY();
-						if(model != null) {
-							switch(mode) {
-								case MENU_SCALE:
-									model.setScale(dY/100.0f);
-						            break;
-						        case MENU_ROTATE:
-						        	model.setXrot(-1*dX);//dY-> Rotation um die X-Achse
-									model.setYrot(-1*dY);//dX-> Rotation um die Y-Achse
-						            break;
-						        case MENU_TRANSLATE:
-						        	model.setXpos(dY/10f);
-									model.setYpos(dX/10f);
-						        	break;
-							}		
-						}
-						break;
-					//Action ended
-					case MotionEvent.ACTION_CANCEL:	
-					case MotionEvent.ACTION_UP:
-						lastX = event.getX();
-						lastY = event.getY();
-						break;
-				}
-			}
+//			if(models!=null) {
+//				switch(event.getAction()) {
+//					//Action started
+//					default:
+//					case MotionEvent.ACTION_DOWN:
+//						lastX = event.getX();
+//						lastY = event.getY();
+//						break;
+//					//Action ongoing
+//					case MotionEvent.ACTION_MOVE:
+//						float dX = lastX - event.getX();
+//						float dY = lastY - event.getY();
+//						lastX = event.getX();
+//						lastY = event.getY();
+//						if(models != null) {
+//							switch(mode) {
+//								case MENU_SCALE:
+//									model.setScale(dY/100.0f);
+//						            break;
+//						        case MENU_ROTATE:
+//						        	model.setXrot(-1*dX);//dY-> Rotation um die X-Achse
+//									model.setYrot(-1*dY);//dX-> Rotation um die Y-Achse
+//						            break;
+//						        case MENU_TRANSLATE:
+//						        	model.setXpos(dY/10f);
+//									model.setYpos(dX/10f);
+//						        	break;
+//							}
+//						}
+//						break;
+//					//Action ended
+//					case MotionEvent.ACTION_CANCEL:
+//					case MotionEvent.ACTION_UP:
+//						lastX = event.getX();
+//						lastY = event.getY();
+//						break;
+//				}
+//			}
 			return true;
 		}
     	
@@ -252,25 +260,26 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
                 try {
                     if (Config.DEBUG)
                         Debug.startMethodTracing("AndObjViewer");
-                    if (type == TYPE_EXTERNAL) {
-                        //an external file might be trimmed
-                        BufferedReader modelFileReader = new BufferedReader(new FileReader(modelFile));
-                        String shebang = modelFileReader.readLine();
-                        if (!shebang.equals("#trimmed")) {
-                            //trim the file:
-                            File trimmedFile = new File(modelFile.getAbsolutePath() + ".tmp");
-                            BufferedWriter trimmedFileWriter = new BufferedWriter(new FileWriter(trimmedFile));
-                            Util.trim(modelFileReader, trimmedFileWriter);
-                            if (modelFile.delete()) {
-                                trimmedFile.renameTo(modelFile);
-                            }
-                        }
-                    }
+//                    if (type == TYPE_EXTERNAL) {
+//                        //an external file might be trimmed
+//                        BufferedReader modelFileReader = new BufferedReader(new FileReader(modelFile));
+//                        String shebang = modelFileReader.readLine();
+//                        if (!shebang.equals("#trimmed")) {
+//                            //trim the file:
+//                            File trimmedFile = new File(modelFile.getAbsolutePath() + ".tmp");
+//                            BufferedWriter trimmedFileWriter = new BufferedWriter(new FileWriter(trimmedFile));
+//                            Util.trim(modelFileReader, trimmedFileWriter);
+//                            if (modelFile.delete()) {
+//                                trimmedFile.renameTo(modelFile);
+//                            }
+//                        }
+//                    }
                     if (fileUtil != null) {
                         BufferedReader fileReader = fileUtil.getReaderFromName(modelFileName);
                         if (fileReader != null) {
-                            model = parser.parse("Model", fileReader);
-                            model3d = new Model3D(model);
+                            Model model = parser.parse("Model", fileReader);
+                            models.add(model);
+                            models3d.add(new Model3D(model, name+".patt"));
                         }
                     }
                     if (Config.DEBUG)
@@ -290,8 +299,9 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
     		
     		//register model
     		try {
-    			if(model3d!=null)
-    				artoolkit.registerARObject(model3d);
+    			if(models3d!=null)
+                    for (Model3D model3d : models3d)
+    				    artoolkit.registerARObject(model3d);
 			} catch (AndARException e) {
 				e.printStackTrace();
 			}
@@ -327,7 +337,7 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 				Toast.makeText(AugmentedModelViewerActivity.this, getResources().getText(R.string.screenshotsaved), Toast.LENGTH_SHORT ).show();
 			else
 				Toast.makeText(AugmentedModelViewerActivity.this, getResources().getText(R.string.screenshotfailed)+errorMsg, Toast.LENGTH_SHORT ).show();
-		};
+		}
 		
 	}
 	
