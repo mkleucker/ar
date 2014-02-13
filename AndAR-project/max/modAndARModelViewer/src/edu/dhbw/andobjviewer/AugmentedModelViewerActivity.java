@@ -166,10 +166,7 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
     	protected Void doInBackground(Void... params) {
 
             for (String model : this.modelNames) {
-
-                Log.d("asdf", "addind model: " + model);
                 this.getModel(model);
-                Log.d("asdf", "added model: "+model );
             }
 
             return null;
@@ -242,6 +239,7 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
                         artoolkit.registerARObject(model3d);
                         Log.d("asdf", "Added two...");
                     }
+                    //artoolkit.registerARObject(models3d.get(0));
 
                 }
 			} catch (AndARException e) {
