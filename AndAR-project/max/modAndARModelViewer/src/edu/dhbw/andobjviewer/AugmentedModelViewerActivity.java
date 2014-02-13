@@ -76,17 +76,11 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 		res=getResources();
 		artoolkit = getArtoolkit();
 
-
-
-        loadMarkersAndModels();
 		//getSurfaceView().setOnTouchListener(new TouchEventHandler());
 		//getSurfaceView().getHolder().addCallback(this);
 	}
 
 
-    private void loadMarkersAndModels(){
-
-    }
 	
 
 	/**
@@ -187,28 +181,13 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
                 try {
                     if (Config.DEBUG)
                         Debug.startMethodTracing("AndObjViewer");
-//                    if (type == TYPE_EXTERNAL) {
-//                        //an external file might be trimmed
-//                        BufferedReader modelFileReader = new BufferedReader(new FileReader(modelFile));
-//                        String shebang = modelFileReader.readLine();
-//                        if (!shebang.equals("#trimmed")) {
-//                            //trim the file:
-//                            File trimmedFile = new File(modelFile.getAbsolutePath() + ".tmp");
-//                            BufferedWriter trimmedFileWriter = new BufferedWriter(new FileWriter(trimmedFile));
-//                            Util.trim(modelFileReader, trimmedFileWriter);
-//                            if (modelFile.delete()) {
-//                                trimmedFile.renameTo(modelFile);
-//                            }
-//                        }
-//                    }
+
                     if (fileUtil != null) {
                         BufferedReader fileReader = fileUtil.getReaderFromName(modelFileName);
                         if (fileReader != null) {
-                            Log.d("asdf", "Create model...");
                             Model model = parser.parse("Model", fileReader);
                             models.add(model);
                             models3d.add(new Model3D(model, name+".patt"));
-                            Log.d("asdf", "Create & add model done...");
 
                         }
                     }
