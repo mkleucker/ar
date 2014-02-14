@@ -75,9 +75,6 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 		super.setNonARRenderer(new LightingRenderer());//or might be omited
 		res=getResources();
 		artoolkit = getArtoolkit();
-
-		//getSurfaceView().setOnTouchListener(new TouchEventHandler());
-		//getSurfaceView().getHolder().addCallback(this);
 	}
 
 
