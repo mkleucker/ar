@@ -135,8 +135,8 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 					getResources().getText(R.string.loading), true);
 			waitDialog.show();
 			ArrayList<String> models = new ArrayList<String>();
-			models.add("android");
-			models.add("barcode");
+			//models.add("android");
+			//models.add("barcode");
 			models.add("sofa");
 			models.add("chair");
 			models.add("plant");

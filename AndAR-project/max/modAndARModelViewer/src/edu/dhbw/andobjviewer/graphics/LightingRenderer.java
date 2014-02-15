@@ -8,6 +8,7 @@ import javax.microedition.khronos.opengles.GL10;
 import android.util.Log;
 import edu.dhbw.andar.interfaces.OpenGLRenderer;
 import edu.dhbw.andar.util.GraphicsUtil;
+import edu.dhbw.andobjviewer.models.Model;
 
 public class LightingRenderer implements OpenGLRenderer {
 
@@ -70,15 +71,24 @@ public class LightingRenderer implements OpenGLRenderer {
 
             Model3D m0 = this.models.get(0);
             Model3D m1 = this.models.get(1);
-
+            Model mm0 = m0.getModel();
+            Model mm1 = m1.getModel();
             if (m0.isVisible() && m1.isVisible()) {
                 double[] o1TransMatrix = m0.getTransMatrix();
                 double[] o2TransMatrix = m1.getTransMatrix();
+
                 double distance = Math.sqrt(Math.pow(o1TransMatrix[3] - o2TransMatrix[3], 2) + Math.pow(o1TransMatrix[7] - o2TransMatrix[7], 2));
                 Log.d(LightingRenderer.class.getSimpleName(), String.format("Distance: %.2f.", distance));
-            }
 
+
+                mm0.setFixedScale((1.f/40)/(float)distance);
+                mm1.setFixedScale(40*(float)distance);
+                //mm0.setFixedScale(5);
+                //mm1.setFixedScale(20);
+
+            }
         }
+
     }
 
 

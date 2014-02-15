@@ -50,6 +50,11 @@ public class Model3D extends ARObject implements Serializable{
 	private HashMap<Material, Integer> textureIDs = new HashMap<Material, Integer>();
 
 
+    public Model getModel ()
+    {
+        return model;
+    }
+
     public Model3D(Model model) {
         this(model, "barcode.patt");
     }

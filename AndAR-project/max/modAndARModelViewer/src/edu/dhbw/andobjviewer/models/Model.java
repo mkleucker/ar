@@ -41,8 +41,7 @@ public class Model implements Serializable{
     public int STATE = STATE_DYNAMIC;
     public static final int STATE_DYNAMIC = 0;
     public static final int STATE_FINALIZED = 1;
-    
-	
+
 	private Vector<Group> groups = new Vector<Group>();
 	/**
 	 * all materials
@@ -90,6 +89,10 @@ public class Model implements Serializable{
 		if(this.scale < 0.0001f)
 			this.scale = 0.0001f;
 	}
+
+    public void setFixedScale(float f) {
+        this.scale = f;
+    }
 
 	public void setXrot(float dY) {
 		this.xrot += dY;
