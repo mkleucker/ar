@@ -81,8 +81,8 @@ public class LightingRenderer implements OpenGLRenderer {
                 Log.d(LightingRenderer.class.getSimpleName(), String.format("Distance: %.2f.", distance));
 
 
-                mm0.setFixedScale((1.f/40)/(float)distance);
-                mm1.setFixedScale(40*(float)distance);
+                mm0.setFixedScale((float)distance / 20.0f);
+                mm1.setFixedScale((float)distance / 20.0f);
                 //mm0.setFixedScale(5);
                 //mm1.setFixedScale(20);
 
