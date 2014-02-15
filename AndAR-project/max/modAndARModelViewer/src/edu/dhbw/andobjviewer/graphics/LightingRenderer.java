@@ -1,13 +1,17 @@
 package edu.dhbw.andobjviewer.graphics;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import android.util.Log;
 import edu.dhbw.andar.interfaces.OpenGLRenderer;
 import edu.dhbw.andar.util.GraphicsUtil;
 
 public class LightingRenderer implements OpenGLRenderer {
+
+    private ArrayList<Model3D> models;
 	
 	private float[] ambientlight0 = {.3f, .3f, .3f, 1f};
 	private float[] diffuselight0 = {.7f, .7f, .7f, 1f};
@@ -50,10 +54,16 @@ public class LightingRenderer implements OpenGLRenderer {
 	private FloatBuffer diffuseLightBuffer3 = GraphicsUtil.makeFloatBuffer(diffuselight3);
 	private FloatBuffer ambientLightBuffer3 = GraphicsUtil.makeFloatBuffer(ambientlight3);
 	
-	
+
+
+    public void setModels(ArrayList<Model3D> models){
+        this.models = models;
+    }
 
 	public final void draw(GL10 gl) {
-		
+        if (this.models != null){
+            Log.d("yeah", "Can see models: "+ models.size());
+        }
 	}
 
 	 

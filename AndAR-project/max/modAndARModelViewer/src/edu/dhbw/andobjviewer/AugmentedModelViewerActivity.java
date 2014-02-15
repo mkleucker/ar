@@ -59,6 +59,7 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 	private ArrayList<Model3D> models3d;
 	private ProgressDialog waitDialog;
 	private Resources res;
+    private LightingRenderer renderer;
 	
 	ARToolkit artoolkit;
 	
@@ -72,7 +73,8 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		super.setNonARRenderer(new LightingRenderer());//or might be omited
+        renderer = new LightingRenderer();
+		super.setNonARRenderer(renderer);//or might be omited
 		res=getResources();
 		artoolkit = getArtoolkit();
 	}
@@ -215,8 +217,7 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
                         artoolkit.registerARObject(model3d);
                         Log.d("asdf", "Added two...");
                     }
-                    //artoolkit.registerARObject(models3d.get(0));
-
+                    renderer.setModels(models3d);
                 }
 			} catch (AndARException e) {
 				e.printStackTrace();
