@@ -60,9 +60,24 @@ public class LightingRenderer implements OpenGLRenderer {
         this.models = models;
     }
 
+    /**
+     * Painting loop. Use this to read changing values & interact with the models.
+     * @param gl OpenGL Context (ignore)
+     */
 	public final void draw(GL10 gl) {
-        if (this.models != null){
-            Log.d("yeah", "Can see models: "+ models.size());
+
+        if (this.models != null && this.models.size() > 1){
+
+            Model3D m0 = this.models.get(0);
+            Model3D m1 = this.models.get(1);
+
+            if (m0.isVisible() && m1.isVisible()) {
+                double[] o1TransMatrix = m0.getTransMatrix();
+                double[] o2TransMatrix = m1.getTransMatrix();
+                double distance = Math.sqrt(Math.pow(o1TransMatrix[3]- o2TransMatrix[3], 2) + Math.pow(o1TransMatrix[7]- o2TransMatrix[7], 2));
+                Log.d(LightingRenderer.class.getSimpleName(), String.format("Distance: %.2f.", distance));
+            }
+
         }
 	}
 

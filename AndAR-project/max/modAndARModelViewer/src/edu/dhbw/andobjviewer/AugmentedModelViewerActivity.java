@@ -87,7 +87,7 @@ public class AugmentedModelViewerActivity extends AndARActivity implements Surfa
 	 */
 	@Override
 	public void uncaughtException(Thread thread, Throwable ex) {
-		System.out.println("");
+		Log.e(AugmentedModelViewerActivity.class.getSimpleName(), ex.getMessage(), ex);
 	}
 	
 
