@@ -33,7 +33,7 @@
 
 // Include database credentials. Please customize these fields with your own
 // database configuration.  
-require_once('config.inc.php');
+require_once('config.php');
 
 
 /*** Specific Custom Functions ***/
