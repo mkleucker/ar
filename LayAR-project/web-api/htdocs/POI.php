@@ -79,6 +79,14 @@ function getAnchor($rawPoi) {
   return $anchor;
 }//getAnchor
 
+function getIcon($rawPoi){
+  $icon = array();
+  $icon['url'] = $rawPoi['icon_url'];
+  $icon['type'] = $rawPoi['icon_type'];
+  return $icon;
+}
+
+
 // Construct text object information
 //
 // Arguments:
@@ -133,6 +141,8 @@ function getHotspots( $db, $value ) {
            lat,
            lon,
            alt,
+           icon_type,
+           icon_url,
            (((acos(sin((:lat1 * pi() / 180)) * sin((lat * pi() / 180)) +
                    cos((:lat2 * pi() / 180)) * cos((lat * pi() / 180)) * 
                    cos((:long  - lon) * pi() / 180))
@@ -181,6 +191,8 @@ function getHotspots( $db, $value ) {
         changetoBool($rawPoi['showBiwOnClick']));  
       // Get anchor object information
       $myPoiParameters->add('anchor', getAnchor($rawPoi));
+      $myPoiParameters->add('icon', getIcon($rawPoi));
+
       // Get text object information
       $myPoiParameters->add('text', getTextDetail($rawPoi));
        
